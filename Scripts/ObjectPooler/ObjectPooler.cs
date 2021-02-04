@@ -44,7 +44,7 @@ public class ObjectPooler : MonoBehaviour
         else
         {
             Debug.Log("More than one instance of ObjectPooler exists, destryoing newest one.");
-            Destroy(gameObject);
+            Destroy(this);          //Destroy the class, not the gameobject
         }
     }
     #endregion
@@ -85,7 +85,11 @@ public class ObjectPooler : MonoBehaviour
     #endregion
 
     #region Spawning From Pool
-    //Make this a static function so other classes don't need to worry if instance is null or not
+    /// <summary>
+    /// Spawns an object from the desired object pool.
+    /// </summary>
+    /// <param name="pooledObject"></param>
+    /// <returns></returns>
     public static GameObject SpawnObject(PoolableObject pooledObject)
     {
         //If the static instance is null don't do anything and pop an error
@@ -143,8 +147,13 @@ public class ObjectPooler : MonoBehaviour
             }
         }
     }
-
-    
+    /// <summary>
+    /// Spawns an object from the desired object pool and sets the transform
+    /// </summary>
+    /// <param name="pooledObject"></param>
+    /// <param name="position"></param>
+    /// <param name="rotation"></param>
+    /// <returns></returns>
     public static GameObject SpawnObject(PoolableObject pooledObject, Vector3 position, Quaternion rotation)
     {
         //Use the base method to return an object
@@ -157,9 +166,26 @@ public class ObjectPooler : MonoBehaviour
         //returned the transformed object
         return instance.objCache;
     }
+    /// <summary>
+    /// Spawns an object from the desired object pool and sets the transform and returns the component of Type type.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="pooledObject"></param>
+    /// <param name="position"></param>
+    /// <param name="rotation"></param>
+    /// <returns></returns>
+    public static T SpawnObject<T>(PoolableObject pooledObject, Vector3 position, Quaternion rotation)
+    {
+        return SpawnObject(pooledObject, position, rotation).GetComponent<T>();
+    }
     #endregion
 
     #region Returning To Pool
+    /// <summary>
+    /// Returns the gameobject to the specified pool
+    /// </summary>
+    /// <param name="poolable"></param>
+    /// <param name="obj"></param>
     public static void ReturnToPool(PoolableObject poolable, GameObject obj)
     {
         if (instance.objectPool.ContainsKey(poolable))
